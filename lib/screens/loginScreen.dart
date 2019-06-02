@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import './chatroom.dart';
 import './chatList.dart';
 
 class LoginScreen extends StatefulWidget {

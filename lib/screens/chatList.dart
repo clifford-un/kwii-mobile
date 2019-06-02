@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import './chatroom.dart';
 class ChatList extends StatefulWidget {
   @override
   _ChatListState createState() => _ChatListState();
@@ -25,6 +26,14 @@ class _ChatListState extends State<ChatList> {
 
   @override
   Widget build(BuildContext context) {
+
+    _saveName(name) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('name', name);
+      print("name: $name");
+    }
+
+
     return DefaultTabController(
       length: 1,
       initialIndex: 0,
@@ -66,7 +75,7 @@ class _ChatListState extends State<ChatList> {
         ),
         body: TabBarView(
           children: [
-            //Container(color: Colors.green,),
+            //Container(color: Colors.green,), 
             Container(
               color: Colors.white,
               child: ListView.builder(
@@ -75,8 +84,14 @@ class _ChatListState extends State<ChatList> {
                   var title = dados.elementAt(index);
                   var imagese = imageses.elementAt(index);
                   var testos = testo.elementAt(index);
-
-                  return Container(
+                  
+                  return  GestureDetector(
+                          onTap: (){
+                            Navigator.push(
+                            context, MaterialPageRoute(builder: (context) => chatroom()));
+                            _saveName(title);
+                                  },
+                      child: Container(
                     width: double.maxFinite,
                     height: 98,
                     child: Padding(
@@ -149,6 +164,7 @@ class _ChatListState extends State<ChatList> {
                         ],
                       ),
                     ),
+                  ),
                   );
                 },
               ),
