@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import './chatroom.dart';
-// LoginScreen
-// _LoginScreenState
-
-// onPressed: () {
-//             Navigator.push(context,
-//                 MaterialPageRoute(builder: (context) => SecondRoute()));
-//           },
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -29,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Email",
           border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+              OutlineInputBorder(borderRadius: BorderRadius.vertical())),
     );
 
     final passwordField = TextField(
@@ -46,6 +40,14 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
+    _incrementCounter(token) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int counter = (prefs.getInt('counter') ?? 0) + 1;
+      print('Pressed $counter times.');
+      await prefs.setInt('counter', counter);
+      await prefs.setString('token', token);
+    }
+
     final loginButon = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
@@ -57,8 +59,9 @@ class _LoginScreenState extends State<LoginScreen> {
           print("Boton de login oprimido");
           print("_emailValue: $_emailValue");
           print("_passwordValue: $_passwordValue");
-          Navigator.push(context,
-                MaterialPageRoute(builder: (context) => chatroom()));
+          _incrementCounter(_emailValue);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => chatroom()));
         },
         child: Text("Login",
             textAlign: TextAlign.center,
@@ -73,17 +76,17 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Container(
           color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.all(36.0),
+            padding: const EdgeInsets.all(32.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
                   height: 155.0,
-                  // child: Image.asset(
-                  //   "assets/logo.png",
-                  //   fit: BoxFit.contain,
-                  // ),
+                  child: Image.asset(
+                    "assets/images/chatting.png",
+                    fit: BoxFit.contain,
+                  ),
                 ),
                 SizedBox(height: 45.0),
                 emailField,
