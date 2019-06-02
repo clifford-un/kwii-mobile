@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './loginScreen.dart';
-import './chatroom.dart';
+import './chatList.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
     setState(() {
       String token = prefs.getString('token');
       print('Token: $token');
-      route = (token == null) ? LoginScreen() : chatroom();
+      route = (token == null) ? LoginScreen() : ChatList();
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => route));
     });

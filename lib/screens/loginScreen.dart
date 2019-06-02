@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './chatroom.dart';
+import './chatList.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -61,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
           print("_passwordValue: $_passwordValue");
           _incrementCounter(_emailValue);
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => chatroom()));
+              context, MaterialPageRoute(builder: (context) => ChatList()));
         },
         child: Text("Login",
             textAlign: TextAlign.center,

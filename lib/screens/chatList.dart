@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class chat_list extends StatefulWidget {
+class ChatList extends StatefulWidget {
   @override
-  _chatListState createState() => _chatListState();
+  _ChatListState createState() => _ChatListState();
 }
 
-class _chatListState extends State<chat_list> {
+class _ChatListState extends State<ChatList> {
 
 
   static List<String> dados =[
