@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class chatroom extends StatefulWidget {
   @override
@@ -6,13 +7,27 @@ class chatroom extends StatefulWidget {
 }
 
 class _chatroomState extends State<chatroom> {
+  var _vari;
+
+  @override
+  void initState() {
+     super.initState();
+    _getName();
+  }
+  _getName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+     setState(() {
+      _vari = prefs.getString('name');
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // Appbar
       appBar: new AppBar(
         // Title
-        title: new Text("Simple Material App"),
+
+        title: new Text("$_vari"),
       ),
       // Body
       body: new Container(
