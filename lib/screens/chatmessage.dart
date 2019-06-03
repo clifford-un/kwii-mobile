@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-const String _name = "Anonymous";
 
 class ChatMessage extends StatelessWidget {
   final String text;
+  final String name;
+  final String picture;
 
 // constructor to get text from textfield
   ChatMessage({
-    this.text
+    this.text,
+    this.name,
+    this.picture
   });
 
   @override
@@ -19,13 +22,13 @@ class ChatMessage extends StatelessWidget {
           new Container(
             margin: const EdgeInsets.only(right: 16.0),
             child: new CircleAvatar(
-              child: new Image.network("http://res.cloudinary.com/kennyy/image/upload/v1531317427/avatar_z1rc6f.png"),
+              child: new Image.network(this.picture),
               ),
           ),
           new Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              new Text(_name, style: Theme.of(context).textTheme.subhead),
+              new Text(this.name,style: Theme.of(context).textTheme.subhead),
               new Container(
                 margin: const EdgeInsets.only(top: 5.0),
                 child: new Text(text),

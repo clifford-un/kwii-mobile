@@ -11,16 +11,33 @@ class chatroom extends StatefulWidget {
 }
 
 class _chatroomState extends State<chatroom> {
-  var _vari;
+  var _titleName;
+  var _pictureProfile;
+  var _message;
   @override
   void initState() {
      super.initState();
     _getName();
+    _getPicture();
+    _getMessage();
+
   }
   _getName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
      setState(() {
-      _vari = prefs.getString('name');
+      _titleName = prefs.getString('name');
+    });
+  }
+  _getPicture() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+     setState(() {
+      _pictureProfile = prefs.getString('picture');
+    });
+  }
+  _getMessage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+     setState(() {
+      _message = prefs.getString('message');
     });
   }
   final TextEditingController _chatController = new TextEditingController();
@@ -29,7 +46,10 @@ class _chatroomState extends State<chatroom> {
   void _handleSubmit(String text) {
     _chatController.clear();
       ChatMessage message = new ChatMessage(
-        text: text
+        text: text,
+        name: _titleName,
+        picture: _pictureProfile,
+
     );
       
     setState(() {
@@ -74,7 +94,7 @@ class _chatroomState extends State<chatroom> {
         // Title
         elevation: 1,
         backgroundColor: Color(0xFF5AA182),
-        title: new Text("$_vari"),
+        title: new Text("$_titleName"),
       ),
     body: Column(
         children: <Widget>[
