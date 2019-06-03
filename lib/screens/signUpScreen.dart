@@ -1,22 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './chatList.dart';
-import './signUpScreen.dart';
 
-class LoginScreen extends StatefulWidget {
+class SignUpScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   TextStyle style = TextStyle(fontFamily: 'Roboto', fontSize: 20.0);
+  String _usernameValue = "";
   String _emailValue = "";
   String _passwordValue = "";
+  String _numberValue = "";
 
   @override
   Widget build(BuildContext context) {
+    final usernameField = TextField(
+      style: style,
+      onChanged: (text) {
+        _usernameValue = text;
+      },
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        hintText: "Username",
+        // border:
+        //     OutlineInputBorder(borderRadius: BorderRadius.vertical())
+      ),
+    );
+
     final emailField = TextField(
       style: style,
+      keyboardType: TextInputType.emailAddress,
       onChanged: (text) {
         _emailValue = text;
       },
@@ -42,6 +57,20 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
+    final numberField = TextField(
+      style: style,
+      keyboardType: TextInputType.number,
+      onChanged: (text) {
+        _numberValue = text;
+      },
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        hintText: "Number",
+        // border:
+        //     OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))
+      ),
+    );
+
     _incrementCounter(token) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       int counter = (prefs.getInt('counter') ?? 0) + 1;
@@ -50,30 +79,8 @@ class _LoginScreenState extends State<LoginScreen> {
       await prefs.setString('token', token);
     }
 
-    final loginButon = Material(
+    final signUpButton = Material(
       elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xFF5AA182),
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () {
-          print("Boton de login oprimido");
-          print("_emailValue: $_emailValue");
-          print("_passwordValue: $_passwordValue");
-          _incrementCounter(_emailValue);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ChatList()));
-        },
-        child: Text("Login",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
-      ),
-    );
-
-    final signUp = Material(
-      // elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
       color: Color(0xFFFFAC6B),
       child: MaterialButton(
@@ -82,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
         onPressed: () {
           print("Boton de signUp oprimido");
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+              context, MaterialPageRoute(builder: (context) => ChatList()));
         },
         child: Text("Sign Up",
             textAlign: TextAlign.center,
@@ -102,28 +109,25 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(
-                  height: 120.0,
-                  child: Image.asset(
-                    "assets/images/chatting.png",
-                    fit: BoxFit.contain,
-                  ),
-                ),
+                SizedBox(height: 20.0),
                 SizedBox(height: 35.0),
+                usernameField,
+                SizedBox(height: 20.0),
                 emailField,
-                SizedBox(height: 25.0),
+                SizedBox(height: 20.0),
                 passwordField,
+                SizedBox(height: 20.0),
+                numberField,
                 SizedBox(
                   height: 35.0,
                 ),
-                loginButon,
+                signUpButton,
                 SizedBox(
                   height: 10.0,
                 ),
                 SizedBox(
                   height: 20.0,
                 ),
-                signUp,
               ],
             ),
           ),
