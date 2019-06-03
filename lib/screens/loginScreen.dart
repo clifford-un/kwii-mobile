@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './chatList.dart';
 import './signUpScreen.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -12,6 +13,14 @@ class _LoginScreenState extends State<LoginScreen> {
   TextStyle style = TextStyle(fontFamily: 'Roboto', fontSize: 20.0);
   String _usernameValue = "";
   String _passwordValue = "";
+
+  final String query = r"""
+                    query {
+                      authTest {
+                        message
+                      }
+                    }
+                  """;
 
   @override
   Widget build(BuildContext context) {
@@ -90,9 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
-
-    return Scaffold(
-        body: SingleChildScrollView(
+    final mainScreen = SingleChildScrollView(
       child: Center(
         child: Container(
           color: Colors.white,
@@ -129,6 +136,24 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-    ));
+    );
+
+    return Scaffold(
+      body: Query(
+          options: QueryOptions(document: query),
+          builder: (
+            QueryResult result, {
+            VoidCallback refetch,
+          }) {
+            if (result.loading) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (result.data == null) {
+              return Text("No Data Found !");
+            }
+            print("result: ${result.data['authTest']['message']}");
+            return mainScreen;
+          }),
+    );
   }
 }
