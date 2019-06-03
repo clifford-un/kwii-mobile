@@ -10,19 +10,19 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextStyle style = TextStyle(fontFamily: 'Roboto', fontSize: 20.0);
-  String _emailValue = "";
+  String _usernameValue = "";
   String _passwordValue = "";
 
   @override
   Widget build(BuildContext context) {
-    final emailField = TextField(
+    final usernameField = TextField(
       style: style,
       onChanged: (text) {
-        _emailValue = text;
+        _usernameValue = text;
       },
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        hintText: "Email",
+        hintText: "Username",
         // border:
         //     OutlineInputBorder(borderRadius: BorderRadius.vertical())
       ),
@@ -59,9 +59,9 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
           print("Boton de login oprimido");
-          print("_emailValue: $_emailValue");
+          print("_usernameValue: $_usernameValue");
           print("_passwordValue: $_passwordValue");
-          _incrementCounter(_emailValue);
+          _incrementCounter(_usernameValue);
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => ChatList()));
         },
@@ -110,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 SizedBox(height: 35.0),
-                emailField,
+                usernameField,
                 SizedBox(height: 25.0),
                 passwordField,
                 SizedBox(
