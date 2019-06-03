@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
     setState(() {
       String token = prefs.getString('token');
       print('Token: $token');
-      route = (token == null) ? LoginScreen() : ChatList();
+      route = (token == null || token == "") ? LoginScreen() : ChatList();
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => route));
     });

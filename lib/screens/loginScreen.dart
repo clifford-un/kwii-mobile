@@ -20,10 +20,11 @@ class _LoginScreenState extends State<LoginScreen> {
         _emailValue = text;
       },
       decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Email",
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.vertical())),
+        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        hintText: "Email",
+        // border:
+        //     OutlineInputBorder(borderRadius: BorderRadius.vertical())
+      ),
     );
 
     final passwordField = TextField(
@@ -51,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final loginButon = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff5AA182),
+      color: Color(0xFF5AA182),
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
@@ -70,6 +71,25 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
+    final signUp = Material(
+      // elevation: 5.0,
+      borderRadius: BorderRadius.circular(30.0),
+      color: Color(0xFFFFAC6B),
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        onPressed: () {
+          print("Boton de signUp oprimido");
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ChatList()));
+        },
+        child: Text("Sign Up",
+            textAlign: TextAlign.center,
+            style: style.copyWith(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+
     return Scaffold(
         body: SingleChildScrollView(
       child: Center(
@@ -82,13 +102,13 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
-                  height: 155.0,
+                  height: 120.0,
                   child: Image.asset(
                     "assets/images/chatting.png",
                     fit: BoxFit.contain,
                   ),
                 ),
-                SizedBox(height: 45.0),
+                SizedBox(height: 35.0),
                 emailField,
                 SizedBox(height: 25.0),
                 passwordField,
@@ -97,8 +117,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 loginButon,
                 SizedBox(
-                  height: 15.0,
+                  height: 10.0,
                 ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                signUp,
               ],
             ),
           ),
