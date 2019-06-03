@@ -32,6 +32,16 @@ class _ChatListState extends State<ChatList> {
       await prefs.setString('name', name);
       print("name: $name");
     }
+    _savePicture(picture) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('picture', picture);
+      print("name: $picture");
+    }
+    _saveMessage(message) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('message', message);
+      print("name: $message");
+    }
 
 
     return DefaultTabController(
@@ -90,6 +100,8 @@ class _ChatListState extends State<ChatList> {
                             Navigator.push(
                             context, MaterialPageRoute(builder: (context) => chatroom()));
                             _saveName(title);
+                            _savePicture(imagese);
+                            _saveMessage(testos);
                                   },
                       child: Container(
                     width: double.maxFinite,
