@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './chatList.dart';
 import './signUpScreen.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:dio/dio.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -11,16 +12,46 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextStyle style = TextStyle(fontFamily: 'Roboto', fontSize: 20.0);
+  Dio dio = new Dio();
+  Response response;
   String _usernameValue = "";
   String _passwordValue = "";
+  bool _isLoading = false;
 
-  final String query = r"""
-                    query {
-                      authTest {
-                        message
-                      }
-                    }
-                  """;
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _saveToken(token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+    print("token: $token");
+  }
+
+  void _createToken(String userName, String password) async {
+    try {
+      // _isLoading = true;
+      response = await dio.post("http://35.245.125.167/login",
+          data: {"userName": userName, "password": password});
+      setState(() {
+        _saveToken(response.data['jwt']);
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => ChatList()));
+        // Navigator.pushReplacement(
+        //     context, MaterialPageRoute(builder: (context) => route));
+      });
+      // _isLoading = false;
+    } catch (err) {
+      // _isLoading = false;
+      print(err);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +82,13 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    _incrementCounter(token) async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      int counter = (prefs.getInt('counter') ?? 0) + 1;
-      print('Pressed $counter times.');
-      await prefs.setInt('counter', counter);
-      await prefs.setString('token', token);
-    }
+    // _incrementCounter() async {
+    //   SharedPreferences prefs = await SharedPreferences.getInstance();
+    //   int counter = (prefs.getInt('counter') ?? 0) + 1;
+    //   print('Pressed $counter times.');
+    //   await prefs.setInt('counter', counter);
+    //   // await prefs.setString('token', token);
+    // }
 
     final loginButon = Material(
       elevation: 5.0,
@@ -70,9 +101,8 @@ class _LoginScreenState extends State<LoginScreen> {
           print("Boton de login oprimido");
           print("_usernameValue: $_usernameValue");
           print("_passwordValue: $_passwordValue");
-          _incrementCounter(_usernameValue);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ChatList()));
+          // _incrementCounter(_usernameValue);
+          _createToken(_usernameValue, _passwordValue);
         },
         child: Text("Login",
             textAlign: TextAlign.center,
@@ -138,22 +168,17 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    return Scaffold(
-      body: Query(
-          options: QueryOptions(document: query),
-          builder: (
-            QueryResult result, {
-            VoidCallback refetch,
-          }) {
-            if (result.loading) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (result.data == null) {
-              return Text("No Data Found !");
-            }
-            print("result: ${result.data['authTest']['message']}");
-            return mainScreen;
-          }),
-    );
+    if (_isLoading) {
+      return Center(child: CircularProgressIndicator());
+    } else {
+      return Scaffold(body: mainScreen);
+    }
+    // if (result.loading) {
+    //   return Center(child: CircularProgressIndicator());
+    // }
+    // if (result.data == null) {
+    //   return Text("No Data Found !");
+    // }
+    // print("result: ${result.data['authTest']['message']}");
   }
 }
