@@ -22,7 +22,10 @@ class ChatMessage extends StatelessWidget {
           new Container(
             margin: const EdgeInsets.only(right: 16.0),
             child: new CircleAvatar(
-              child: new Image.network(this.picture),
+              child: new Image.asset(
+                    this.picture,
+                    fit: BoxFit.contain,
+                  ),
               ),
           ),
           new Column(
