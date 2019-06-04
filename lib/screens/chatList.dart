@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './chatroom.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 class ChatList extends StatefulWidget {
   @override
   _ChatListState createState() => _ChatListState();
@@ -9,20 +10,21 @@ class ChatList extends StatefulWidget {
 class _ChatListState extends State<ChatList> {
 
 
-  static List<String> dados =[
-    'Dia Kurosawa',
-    'Nadeko Sengoku',
-  ];
+  //static List<String> dados =[
+   // 'Dia Kurosawa',
+   // 'Nadeko Sengoku',
+  //];
 
-  static List<String> imageses =[
-    'https://static.zerochan.net/Kurosawa.Dia.full.2222565.jpg',
-    'https://cdn.myanimelist.net/images/characters/2/264877.jpg',
-  ];
+  //static List<String> imageses =[
+    //'https://static.zerochan.net/Kurosawa.Dia.full.2222565.jpg',
+    //'https://cdn.myanimelist.net/images/characters/2/264877.jpg',
+   // 'https://cdn.myanimelist.net/images/characters/2/264877.jpg',
+ // ];
 
-  static List<String> testo =[
-    'Quien es Nadeko?',
-    'Holi cómo estas? UwU',
-  ];
+  //static List<String> testo =[
+  //  'Quien es Nadeko?',
+  //  'Holi cómo estas? UwU',
+ // ];
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +44,28 @@ class _ChatListState extends State<ChatList> {
       await prefs.setString('message', message);
       print("name: $message");
     }
+    _saveChatRoomId(id) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('chat_room_id', id);
+    }
+    _remover_a_la_mama_de_samael() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove("token");
+    }
 
-
+    final String query = r"""
+                    query{
+                    getChatroomsByUser(user_id: 2){
+                      name
+                      id
+                    }
+                    }
+                  """;
     return DefaultTabController(
       length: 1,
       initialIndex: 0,
       child: Scaffold(
+        
         appBar: AppBar(
           elevation: 1,
           backgroundColor: Color(0xFF5AA182),
@@ -62,7 +80,7 @@ class _ChatListState extends State<ChatList> {
               icon: Icon(Icons.message),
             ),
             IconButton(
-              onPressed: (){},
+              onPressed: (){_remover_a_la_mama_de_samael();},
               icon: Icon(Icons.more_vert),
             )
           ],
@@ -83,24 +101,37 @@ class _ChatListState extends State<ChatList> {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            //Container(color: Colors.green,), 
-            Container(
+        body: Query(
+          options: QueryOptions(document: query),
+          builder: (
+            QueryResult result, {
+            VoidCallback refetch,
+          }) {
+            if (result.loading) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (result.data == null) {
+              return Text("No Data Found !");
+            }
+            print("resultado: ${result.data['getChatroomsByUser']}");
+            return Container(
               color: Colors.white,
               child: ListView.builder(
-                itemCount: dados.length,
+                itemCount: result.data['getChatroomsByUser'].length,
                 itemBuilder: (context, index){
-                  var title = dados.elementAt(index);
-                  var imagese = imageses.elementAt(index);
-                  var testos = testo.elementAt(index);
+
+                  var title = result.data['getChatroomsByUser'][index]['name'];
+                  var chatRoomId= result.data['getChatroomsByUser'][index]['id'];
+                  //var imagese = imageses.elementAt(index);
+                  var testos = "Hola!";
                   
                   return  GestureDetector(
                           onTap: (){
                             Navigator.push(
                             context, MaterialPageRoute(builder: (context) => chatroom()));
                             _saveName(title);
-                            _savePicture(imagese);
+                           // _savePicture(imagese);
+                            _saveChatRoomId(chatRoomId);
                             _saveMessage(testos);
                                   },
                       child: Container(
@@ -117,7 +148,7 @@ class _ChatListState extends State<ChatList> {
                                 child: Image(
                                   width: 50,
                                   height: 50,
-                                  image: NetworkImage(imagese),
+                                  image: AssetImage("assets/images/chatting.png"),
                                 ),
                               ),
                               Column(
@@ -144,25 +175,7 @@ class _ChatListState extends State<ChatList> {
                                   ),
                                   ),
 
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 4, left: 8),
-                                    child: Container(
-                                      width: 30,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: BorderRadius.all(Radius.circular(100)),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          '1',
-                                          style: TextStyle(
-                                              color: Colors.white
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
+                                  
                                 ],
                               )
                             ],
@@ -180,11 +193,9 @@ class _ChatListState extends State<ChatList> {
                   );
                 },
               ),
-            ),
-           // Container(color: Colors.red, child: Text("Hello World!"),),
-          ],
+            );
+          }),
         ),
-      ),
-    );
+      );
   }
 }
