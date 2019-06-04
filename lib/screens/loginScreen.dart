@@ -22,8 +22,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                   """;
 
+  
+
   @override
   Widget build(BuildContext context) {
+    String createToken = r"""
+    mutation createToken($userName: String!, $password: String!){
+      createToken(user: {
+        userName: $userName,
+        password: $password
+        }) {
+        jwt
+	      error
+      }
+    }
+    """;
     final usernameField = TextField(
       style: style,
       onChanged: (text) {
@@ -51,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    _incrementCounter(token) async {
+    _setToken(token) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       int counter = (prefs.getInt('counter') ?? 0) + 1;
       print('Pressed $counter times.');
@@ -59,27 +72,83 @@ class _LoginScreenState extends State<LoginScreen> {
       await prefs.setString('token', token);
     }
 
-    final loginButon = Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xFF5AA182),
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () {
-          print("Boton de login oprimido");
-          print("_usernameValue: $_usernameValue");
-          print("_passwordValue: $_passwordValue");
-          _incrementCounter(_usernameValue);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ChatList()));
+    final loginButton = Mutation(
+      options: MutationOptions(
+        document: createToken, // this is the mutation string you just created
+        variables: <String, dynamic> {
+          "userName": _usernameValue,
+          "password": _passwordValue
         },
-        child: Text("Login",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
       ),
+      builder: (
+        RunMutation runMutation,
+        QueryResult result,
+      ) {
+        // if (result.loading) {
+        //   return Center(child: CircularProgressIndicator());
+        // }
+        return Material(
+          elevation: 5.0,
+          borderRadius: BorderRadius.circular(30.0),
+          color: Color(0xFF5AA182),
+          child: MaterialButton(
+            minWidth: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            onPressed: () async {
+              print("Boton de login oprimido");
+              print("_usernameValue: $_usernameValue");
+              print("_passwordValue: $_passwordValue");
+              print("result: $result");
+              await runMutation({});
+              // _setToken(_usernameValue);
+              // Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (context) => ChatList()));
+            },
+            child: Text("Login",
+                textAlign: TextAlign.center,
+                style: style.copyWith(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+        );
+      },
+      // you can update the cache based on results
+      // update: (Cache cache, QueryResult result) {
+      //   return cache;
+      // },
+
+      // or do something with the result.data on completion
+      onCompleted: (dynamic resultData) {
+        print("createToken: $createToken");
+        print(resultData);
+      },
     );
+
+    // final loginButton0 = Material(
+    //   elevation: 5.0,
+    //   borderRadius: BorderRadius.circular(30.0),
+    //   color: Color(0xFF5AA182),
+    //   child: MaterialButton(
+    //     minWidth: MediaQuery.of(context).size.width,
+    //     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+    //     onPressed: () {
+    //       print("Boton de login oprimido");
+    //       print("_usernameValue: $_usernameValue");
+    //       print("_passwordValue: $_passwordValue");
+    //       // runMutation({});
+    //       // _setToken(_usernameValue);
+    //       // Navigator.push(
+    //       //     context,
+    //       //     MaterialPageRoute(
+    //       //         builder: (context) => ChatList()));
+    //     },
+    //     child: Text("Login",
+    //         textAlign: TextAlign.center,
+    //         style: style.copyWith(
+    //             color: Colors.white, fontWeight: FontWeight.bold)),
+    //   ),
+    // );
 
     final signUp = Material(
       // elevation: 5.0,
@@ -99,7 +168,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
-    final mainScreen = SingleChildScrollView(
+
+    var mainScreen = SingleChildScrollView(
       child: Center(
         child: Container(
           color: Colors.white,
@@ -123,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   height: 35.0,
                 ),
-                loginButon,
+                loginButton,
                 SizedBox(
                   height: 10.0,
                 ),
@@ -139,21 +209,23 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     return Scaffold(
-      body: Query(
-          options: QueryOptions(document: query),
-          builder: (
-            QueryResult result, {
-            VoidCallback refetch,
-          }) {
-            if (result.loading) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (result.data == null) {
-              return Text("No Data Found !");
-            }
-            print("result: ${result.data['authTest']['message']}");
-            return mainScreen;
-          }),
-    );
+        // body: Query(
+        //     options: QueryOptions(document: query),
+        //     builder: (
+        //       QueryResult result, {
+        //       VoidCallback refetch,
+        //     }) {
+        //       if (result.loading) {
+        //         return Center(child: CircularProgressIndicator());
+        //       }
+        //       if (result.data == null) {
+        //         return Text("No Data Found!");
+        //       }
+        //       print("result: ${result.data['authTest']['message']}");
+        //       return mainScreen;
+        //     }),
+
+        body: mainScreen
+        );
   }
 }

@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'screens/splashScreen.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+final String GRAPHQL_ENDPOINT = "http://35.245.79.61/graphql";
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final HttpLink httpLink = HttpLink(uri: "http://35.245.79.61/graphql");
+    final HttpLink httpLink = HttpLink(uri: GRAPHQL_ENDPOINT);
     final ValueNotifier<GraphQLClient> client = ValueNotifier<GraphQLClient>(
       GraphQLClient(
         link: httpLink as Link,
