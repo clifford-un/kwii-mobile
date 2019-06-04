@@ -16,7 +16,7 @@ class _chatroomState extends State<chatroom> {
   var _pictureProfile;
   var _message;
   var _chatroomid;
-  var _username= []; 
+  var _username= {}; 
   @override
   void initState() {
      super.initState();
@@ -24,6 +24,8 @@ class _chatroomState extends State<chatroom> {
     _getPicture();
     _getMessage();
     _getChatRoomId();
+    _getHttp(1);
+    _getHttp(2);
 
 
   }
@@ -65,7 +67,7 @@ class _chatroomState extends State<chatroom> {
   try {
     Response response = await Dio().get("http://35.247.223.67/users/$id");
     setState(() {
-      _username.add(response.data['user']['user_name']);
+      _username[id] = response.data['user']['user_name'];
     });
  
   } catch (e) {
@@ -163,7 +165,7 @@ class _chatroomState extends State<chatroom> {
               //_getHttp(result.data['chatById'][i]['chat_user_origin']);
               ChatMessage message = new ChatMessage(
             text: result.data['chatById'][i]['chat_text'],
-            name: result.data['chatById'][i]['chat_user_origin'].toString(),
+            name: _username[result.data['chatById'][i]['chat_user_origin']],
             picture: _pictureProfile,
             );
              _messages.insert(0, message);      
