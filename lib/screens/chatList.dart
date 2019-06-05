@@ -27,6 +27,27 @@ class _ChatListState extends State<ChatList> {
   //  'Holi cómo estas? UwU',
   // ];
 
+  _getInitialData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      String token = prefs.getString('token');
+      String userId = prefs.getString('userId');
+      String userName = prefs.getString('userName');
+      print("Bienvenido: $userName!\nCon ID: $userId y token: $token");
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getInitialData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     _saveName(name) async {
@@ -54,7 +75,7 @@ class _ChatListState extends State<ChatList> {
 
     _signOut() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.remove("token");
+      await prefs.clear();
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => LoginScreen()));
     }
@@ -89,7 +110,8 @@ class _ChatListState extends State<ChatList> {
                 print("_signOut");
                 _signOut();
               },
-              icon: Icon(Icons.more_vert),
+              // icon: Icon(Icons.more_vert),
+              icon: Icon(Icons.exit_to_app),
             )
           ],
           bottom: TabBar(

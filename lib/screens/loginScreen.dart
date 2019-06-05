@@ -4,6 +4,7 @@ import './chatList.dart';
 import './signUpScreen.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:dio/dio.dart';
+import '../utils/login.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -28,19 +29,13 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _saveToken(token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
-    print("token: $token");
-  }
-
   void _createToken(String userName, String password) async {
     try {
       // _isLoading = true;
       response = await dio.post("http://35.245.125.167/login",
           data: {"userName": userName, "password": password});
+      await saveToken(response.data);
       setState(() {
-        _saveToken(response.data['jwt']);
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => ChatList()));
         // Navigator.pushReplacement(
