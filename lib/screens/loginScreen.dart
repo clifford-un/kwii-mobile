@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './chatList.dart';
@@ -5,6 +7,7 @@ import './signUpScreen.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:dio/dio.dart';
 import '../utils/login.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -18,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String _usernameValue = "";
   String _passwordValue = "";
   bool _isLoading = false;
-
+  var client = new http.Client();
   @override
   void initState() {
     super.initState();
@@ -29,23 +32,45 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _createToken(String userName, String password) async {
+  void _sendGraphql(query,variables) async {
+    
     try {
-      // _isLoading = true;
-      response = await dio.post("http://35.245.125.167/login",
-          data: {"userName": userName, "password": password});
+
+      //response = await dio.post("http://jsonplaceholder.typicode.com/posts", data: {"title": "foo","body": "bar", "userId": 1});
+      response = await dio.post("https://kwiiun.com/kwii_api/graphql", data: {"query": query,"variables": variables},options: Options(contentType: ContentType.parse("application/json")) );
+      print("response: ${response.data}");
       await saveToken(response.data);
-      setState(() {
+       setState(() {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => ChatList()));
         // Navigator.pushReplacement(
         //     context, MaterialPageRoute(builder: (context) => route));
       });
-      // _isLoading = false;
-    } catch (err) {
-      // _isLoading = false;
-      print(err);
-    }
+    }on DioError catch(e) {
+    // The request was made and the server responded with a status code
+    // that falls out of the range of 2xx and is also not 304.
+    if(e.response != null) {
+      print("if Higuaran");
+        print(e.response.data);
+        print(e.response.headers); 
+        print(e.response.request);   
+    } else{
+        // Something happened in setting up or sending the request that triggered an Error  
+        print(e.request);  
+        print(e.message);
+    }  
+}
+  }
+  
+  void _createToken(String userName, String password) async {
+    String query = r"""mutation createToken($username: String!, $password: String!) {
+  createToken(user: {userName: $username, password: $password}) {
+      jwt, user_id, user_name
+  }
+}""";
+var variables = {"username": userName, "password": password};
+    _sendGraphql(query, variables);
+    print("sendgraphql");
   }
 
   @override
